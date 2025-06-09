@@ -109,6 +109,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', async (req, res) => {
   try {
+    const configPath = path.join(__dirname, 'config.js');
+    delete require.cache[require.resolve(configPath)];
+    const config = require(configPath);
     // Lista os arquivos JSON no diretório de saída
     const outputDir = config.outputDir || path.join(__dirname, 'output');
     await fs.ensureDir(outputDir);
@@ -122,7 +125,7 @@ app.get('/', async (req, res) => {
   } catch (error) {
     console.error('Erro ao listar arquivos JSON:', error);
     res.render('configForm', { 
-      config,
+      config: {},
       jsonFiles: [] 
     });
   }
