@@ -1,0 +1,69 @@
+[
+  {
+    "entidade": "LOTERIA DO ESTADO DE MINAS GERAIS",
+    "codigo": "7",
+    "ano": "2026",
+    "natureza": "Alimentar",
+    "processo": "0077703-58.2024.8.13.0024",
+    "data_protocolo": "31/10/2022",
+    "credor": "A.F.M.",
+    "status": "Aberto",
+    "numero": "50668336820218130024",
+    "pje_processed": true,
+    "assertiva_processed": false,
+    "partyInfo": [
+      {
+        "name": "ALBERTO SALES PEREIRA",
+        "cpf": "254.448.676-72",
+        "role": "REQUERENTE",
+        "lawyers": "ALINE DE FATIMA MARQUES (CPF: 064.624.976-29, OAB: MG146555)"
+      },
+      {
+        "name": "ALINE DE FATIMA MARQUES",
+        "cpf": "064.624.976-29",
+        "role": "REQUERENTE",
+        "lawyers": "ALINE DE FATIMA MARQUES (CPF: 064.624.976-29, OAB: MG146555)"
+      }
+    ]
+  },
+  {
+    "entidade": "LOTERIA DO ESTADO DE MINAS GERAIS",
+    "codigo": "8",
+    "ano": "2026",
+    "natureza": "Alimentar",
+    "processo": "0077701-88.2024.8.13.0024",
+    "data_protocolo": "31/10/2022",
+    "credor": "A.S.P.",
+    "status": "Aberto",
+    "numero": "50668336820218130024",
+    "pje_processed": true,
+    "assertiva_processed": false,
+    "partyInfo": [
+      {
+        "name": "ALBERTO SALES PEREIRA",
+        "cpf": "254.448.676-72",
+        "role": "REQUERENTE",
+        "lawyers": "ALINE DE FATIMA MARQUES (CPF: 064.624.976-29, OAB: MG146555)"
+      },
+      {
+        "name": "ALINE DE FATIMA MARQUES",
+        "cpf": "064.624.976-29",
+        "role": "REQUERENTE",
+        "lawyers": "ALINE DE FATIMA MARQUES (CPF: 064.624.976-29, OAB: MG146555)"
+      }
+    ]
+  },
+  {
+    "entidade": "LOTERIA DO ESTADO DE MINAS GERAIS",
+    "codigo": "9",
+    "ano": "2026",
+    "natureza": "Alimentar",
+    "processo": "0087344-70.2024.8.13.0024",
+    "data_protocolo": "31/12/2019",
+    "credor": "C.M.M.",
+    "status": "Aberto",
+    "numero": "52898248320238130024",
+    "pje_processed": false,
+    "assertiva_processed": false
+  }
+]
