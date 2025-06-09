@@ -3,6 +3,30 @@
 <head>
   <title>Configurações do Scraper</title>
 </head>
+  <script>
+    async function runScraper() {
+      const runButton = document.getElementById('run-button');
+      const statusDiv = document.getElementById('status');
+      const downloadLinksDiv = document.getElementById('download-links');
+
+      runButton.disabled = true;
+      statusDiv.innerText = 'Iniciando scraper...';
+      downloadLinksDiv.innerHTML = ''; // Limpa links de download anteriores
+
+      try {
+        const response = await fetch('/run-scraper', { method: 'POST' });
+        const data = await response.json();
+
+        statusDiv.innerText = data.status === 'success' ? 'Scraper concluído com sucesso!' : 'Erro ao executar scraper: ' + data.message;
+      } catch (error) {
+        statusDiv.innerText = 'Erro na comunicação com o servidor: ' + error.message;
+      } finally {
+        runButton.disabled = false;
+        // Recarrega a página para atualizar a lista de arquivos JSON
+        window.location.reload();
+      }
+    }
+  </script>
 <body>
   <h1>Configurações do Scraper</h1>
   <form action="/save" method="post">
@@ -37,5 +61,26 @@
     <br>
     <button type="submit">Salvar</button>
   </form>
+
+  <hr>
+
+  <h2>Execução do Scraper</h2>
+  <button id="run-button" onclick="runScraper()">Executar Scraper</button>
+  <div id="status" style="margin-top: 10px;"></div>
+
+  <hr>
+
+  <h2>Arquivos JSON Gerados</h2>
+  <div id="download-links">
+    <% if (jsonFiles && jsonFiles.length > 0) { %>
+      <ul>
+        <% jsonFiles.forEach(file => { %>
+          <li><a href="/download/<%= file %>" download><%= file %></a></li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>Nenhum arquivo JSON gerado ainda.</p>
+    <% } %>
+  </div>
 </body>
 </html>
