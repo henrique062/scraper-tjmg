@@ -1,0 +1,23 @@
+{
+  "name": "tjmg-pje-scraper",
+  "version": "1.0.0",
+  "description": "Script para extrair dados do TJMG e do PJE",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "tjmg": "node tjmg-scraper.js",
+    "pje": "node pje-scraper.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "puppeteer": "^24.10.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

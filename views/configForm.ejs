@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Configurações do Scraper</title>
+</head>
+<body>
+  <h1>Configurações do Scraper</h1>
+  <form action="/save" method="post">
+    <h2>Consulta</h2>
+    <div>
+      <label for="entidade">Entidade:</label>
+      <input type="text" id="entidade" name="entidade" value="<%= config.consulta.entidade %>">
+    </div>
+    <div>
+      <label for="anoInicio">Ano Início:</label>
+      <input type="text" id="anoInicio" name="anoInicio" value="<%= config.consulta.anoInicio %>">
+    </div>
+    <div>
+      <label for="anoFim">Ano Fim:</label>
+      <input type="text" id="anoFim" name="anoFim" value="<%= config.consulta.anoFim %>">
+    </div>
+    <div>
+      <label for="ocultarFechados">Ocultar Fechados:</label>
+      <input type="checkbox" id="ocultarFechados" name="ocultarFechados" <%= config.consulta.ocultarFechados ? 'checked' : '' %> >
+    </div>
+     <div>
+      <label for="maxPages">Máximo de Páginas:</label>
+      <input type="number" id="maxPages" name="maxPages" value="<%= config.consulta.maxPages %>">
+    </div>
+ 
+    <h2>Navegador</h2>
+    <div>
+      <label for="headless">Modo Headless:</label>
+      <input type="checkbox" id="headless" name="headless" <%= config.browser.headless ? 'checked' : '' %>>
+    </div>
+
+    <br>
+    <button type="submit">Salvar</button>
+  </form>
+</body>
+</html>
