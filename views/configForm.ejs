@@ -14,7 +14,7 @@
       downloadLinksDiv.innerHTML = ''; // Limpa links de download anteriores
 
       try {
-        const response = await fetch('/run-scraper', { method: 'POST' });
+        const response = await fetch('/scrape', { method: 'POST' });
         const data = await response.json();
 
         statusDiv.innerText = data.status === 'success' ? 'Scraper concluído com sucesso!' : 'Erro ao executar scraper: ' + data.message;
