@@ -22,11 +22,18 @@ module.exports = {
   
   // Configurações do navegador
   browser: {
-    headless: false, // Defina como false para executar em modo não-headless
+    headless: process.env.NODE_ENV === 'production' ? 'new' : false, // Usa o novo modo headless em produção
     width: 1366,
     height: 768,
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
-    timeout: 60000 // 60 segundos
+    timeout: 60000, // 60 segundos
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu'
+    ]
   },
   
   // Configurações de comportamento humano
