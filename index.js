@@ -140,6 +140,38 @@ app.post('/scrape', async (req, res) => {
   res.send('Scraping iniciado em background. Verifique o console para o progresso.');
 });
 
+app.post('/save', (req, res) => {
+  try {
+    const configPath = path.join(__dirname, 'config.js');
+    // Lemos a versão atual para não sobrescrever configurações não editadas pelo formulário
+    delete require.cache[require.resolve(configPath)];
+    const configFile = require(configPath);
+
+    // Atualizamos as configurações com base nos dados do formulário.
+    configFile.consulta.entidade = req.body.entidade;
+    configFile.consulta.anoInicio = req.body.anoInicio;
+    configFile.consulta.anoFim = req.body.anoFim;
+    configFile.consulta.ocultarFechados = req.body.ocultarFechados === 'on';
+    configFile.consulta.maxPages = parseInt(req.body.maxPages, 10);
+    configFile.browser.headless = req.body.headless === 'on';
+
+    // Convertemos o objeto de configuração de volta para uma string JavaScript
+    const configString = `/**\n * Arquivo de configuração para o scraper\n */\n\nconst path = require('path');\n\nmodule.exports = ${JSON.stringify(configFile, null, 2)};\n`;
+
+    require('fs').writeFile(configPath, configString, 'utf8', (err) => {
+      if (err) {
+        console.error("Erro ao escrever config.js:", err);
+        res.status(500).send('Erro ao salvar configurações.');
+        return;
+      }
+      res.redirect('/');
+    });
+  } catch (err) {
+    console.error("Erro ao salvar configurações:", err);
+    res.status(500).send('Erro ao salvar configurações.');
+  }
+});
+
 // Adiciona rota para download dos arquivos
 app.get('/download/:filename', async (req, res) => {
   try {
