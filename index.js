@@ -7,6 +7,7 @@ const path = require('path');
 const { scrapeTJMG } = require('./tjmg-scraper');
 const { scrapePJE } = require('./pje-scraper');
 const { writeJsonFile, readJsonFile } = require('./utils');
+const fs = require('fs-extra');
 let config = require('./config');
 
 /**
@@ -106,8 +107,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.get('/', (req, res) => {
-  res.render('configForm', { config });
+app.get('/', async (req, res) => {
+  try {
+    // Lista os arquivos JSON no diretório de saída
+    const outputDir = config.outputDir || path.join(__dirname, 'output');
+    await fs.ensureDir(outputDir);
+    const files = await fs.readdir(outputDir);
+    const jsonFiles = files.filter(file => file.endsWith('.json'));
+
+    res.render('configForm', { 
+      config,
+      jsonFiles 
+    });
+  } catch (error) {
+    console.error('Erro ao listar arquivos JSON:', error);
+    res.render('configForm', { 
+      config,
+      jsonFiles: [] 
+    });
+  }
 });
 
 app.post('/scrape', async (req, res) => {
@@ -120,6 +138,17 @@ app.post('/scrape', async (req, res) => {
   process.nextTick(() => runScraping(config));
 
   res.send('Scraping iniciado em background. Verifique o console para o progresso.');
+});
+
+// Adiciona rota para download dos arquivos
+app.get('/download/:filename', async (req, res) => {
+  try {
+    const filePath = path.join(config.outputDir, req.params.filename);
+    res.download(filePath);
+  } catch (error) {
+    console.error('Erro ao fazer download do arquivo:', error);
+    res.status(404).send('Arquivo não encontrado');
+  }
 });
 
 app.listen(port, () => {
