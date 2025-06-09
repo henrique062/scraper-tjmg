@@ -84,3 +84,5 @@ module.exports = {
   outputDir: path.join(__dirname, 'output')
 };
 
+const configPath = path.join(__dirname, 'config.js');
+
