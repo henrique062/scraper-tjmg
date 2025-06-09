@@ -22,7 +22,7 @@ module.exports = {
   
   // Configurações do navegador
   browser: {
-    headless: process.env.NODE_ENV === 'production' ? 'new' : false, // Usa o novo modo headless em produção
+    headless: process.env.NODE_ENV === 'production' ? 'new' : true,
     width: 1366,
     height: 768,
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
