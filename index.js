@@ -133,7 +133,12 @@ app.get('/', async (req, res) => {
 
 app.post('/scrape', async (req, res) => {
   const formConfig = req.body;
-  // Atualiza o objeto de configuração global com os dados do formulário
+  // Sempre recarregue o config atualizado do disco
+  const configPath = path.join(__dirname, 'config.js');
+  delete require.cache[require.resolve(configPath)];
+  const config = require(configPath);
+
+  // Atualiza o objeto de configuração global com os dados do formulário (se necessário)
   Object.assign(config.consulta, formConfig);
   console.log('Configuração atualizada:', config);
 
