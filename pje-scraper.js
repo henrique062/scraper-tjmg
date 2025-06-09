@@ -168,6 +168,7 @@ async function scrapePJE(inputFile) {
   // Inicia o navegador
   const browser = await puppeteer.launch({
     headless: config.browser.headless,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     defaultViewport: { 
       width: config.browser.width, 
       height: config.browser.height 
