@@ -8,7 +8,6 @@ const { scrapeTJMG } = require('./tjmg-scraper');
 const { scrapePJE } = require('./pje-scraper');
 const { writeJsonFile, readJsonFile } = require('./utils');
 const fs = require('fs-extra');
-let config = require('./config');
 
 /**
  * Formata os dados combinados no formato especificado pelo usuário
@@ -56,6 +55,11 @@ const formatData = (data) => {
 const runScraping = async (config) => {
   try {
     console.log('Iniciando o processo de scraping...');
+    console.log('Entidade configurada:', config.consulta.entidade);
+    console.log('Ano Início:', config.consulta.anoInicio);
+    console.log('Ano Fim:', config.consulta.anoFim);
+    console.log('Ocultar Fechados:', config.consulta.ocultarFechados);
+    console.log('Max Pages:', config.consulta.maxPages);
 
     // Executa o scraping do TJMG
     console.log('Etapa 1: Scraping do TJMG');
@@ -140,7 +144,7 @@ app.post('/scrape', async (req, res) => {
 
   // Atualiza o objeto de configuração global com os dados do formulário (se necessário)
   Object.assign(config.consulta, formConfig);
-  console.log('Configuração atualizada:', config);
+  console.log('Configuração utilizada para scraping:', config.consulta); // Log dos dados usados
 
   // Inicia o scraping em background
   process.nextTick(() => runScraping(config));
@@ -151,6 +155,7 @@ app.post('/scrape', async (req, res) => {
 app.post('/save', (req, res) => {
   try {
     const configPath = path.join(__dirname, 'config.js');
+    console.log('Salvando config em:', configPath); // Log do caminho
     // Lemos a versão atual para não sobrescrever configurações não editadas pelo formulário
     delete require.cache[require.resolve(configPath)];
     const configFile = require(configPath);
@@ -172,6 +177,7 @@ app.post('/save', (req, res) => {
         res.status(500).send('Erro ao salvar configurações.');
         return;
       }
+      console.log('Configuração salva com sucesso!'); // Log de sucesso
       res.redirect('/');
     });
   } catch (err) {
