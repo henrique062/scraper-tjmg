@@ -6,7 +6,6 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs').promises;
 const path = require('path');
-const config = require('./config');
 const { randomDelay, writeJsonFile } = require('./utils');
 
 // Adiciona o plugin stealth para evitar detecção
@@ -16,7 +15,7 @@ puppeteer.use(StealthPlugin());
  * Função principal para extrair dados do site do TJMG
  * @returns {Promise<Array>} - Array com os dados extraídos
  */
-async function scrapeTJMG() {
+async function scrapeTJMG(config) {
   console.log('Iniciando scraping do TJMG...');
   
   // Cria diretório de saída se não existir
@@ -244,7 +243,7 @@ async function scrapeTJMG() {
     await writeJsonFile(outputFile, allTableData);
     console.log(`Dados salvos em ${outputFile}`);
     
-    return allTableData;
+    return { allTableData, outputFile };
   } catch (error) {
     console.error('Erro durante o scraping do TJMG:', error);
     return [];
@@ -259,7 +258,9 @@ module.exports = { scrapeTJMG };
 
 // Se este arquivo for executado diretamente
 if (require.main === module) {
-  scrapeTJMG()
+  // Carrega config do disco para execução direta
+  const config = require('./config');
+  scrapeTJMG(config)
     .then(() => console.log('Scraping do TJMG concluído'))
     .catch(error => console.error('Erro:', error));
 }

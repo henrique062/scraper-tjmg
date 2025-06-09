@@ -63,40 +63,34 @@ const runScraping = async (config) => {
 
     // Executa o scraping do TJMG
     console.log('Etapa 1: Scraping do TJMG');
-    const tjmgData = await scrapeTJMG(config);
+    const { allTableData, outputFile } = await scrapeTJMG(config);
 
-    if (!tjmgData || tjmgData.length === 0) {
+    if (!allTableData || allTableData.length === 0) {
       console.error('Não foram encontrados dados no TJMG. Encerrando o processo.');
- return;
-    }
-
-    // Caminho do arquivo com os dados do TJMG
-    const tjmgFile = path.join(
-      config.outputDir,
-      `tjmg_${config.consulta.entidade.replace(/\s+/g, '_')}_${config.consulta.anoInicio}-${config.consulta.anoFim}.json`
-    );
-
-    // Executa o scraping do PJE
-    console.log('Etapa 2: Scraping do PJE');
-    const combinedData = await scrapePJE(tjmgFile);
-
-    if (!combinedData || combinedData.length === 0) {
-      console.error('Não foi possível combinar os dados do TJMG e PJE. Encerrando o processo.');
- return;
+      return;
     }
 
     // Formata os dados no formato especificado
     console.log('Etapa 3: Formatando os dados');
-    const formattedData = formatData(combinedData);
+    const formattedData = formatData(allTableData);
 
     // Salva os dados formatados
-    const outputFile = path.join(
+    const outputFileFormatted = path.join(
       config.outputDir,
       `formatted_${config.consulta.entidade.replace(/\s+/g, '_')}_${config.consulta.anoInicio}-${config.consulta.anoFim}.json`
     );
 
-    await writeJsonFile(outputFile, formattedData);
-    console.log(`Dados formatados salvos em ${outputFile}`);
+    await writeJsonFile(outputFileFormatted, formattedData);
+    console.log(`Dados formatados salvos em ${outputFileFormatted}`);
+
+    // Executa o scraping do PJE usando o arquivo realmente gerado
+    console.log('Etapa 2: Scraping do PJE');
+    const combinedData = await scrapePJE(config, outputFile);
+
+    if (!combinedData || combinedData.length === 0) {
+      console.error('Não foi possível combinar os dados do TJMG e PJE. Encerrando o processo.');
+      return;
+    }
 
     console.log('Processo de scraping concluído com sucesso!');
   } catch (error) {

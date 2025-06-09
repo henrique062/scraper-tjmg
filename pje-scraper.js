@@ -6,7 +6,6 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs').promises;
 const path = require('path');
-const config = require('./config');
 const { randomDelay, applyProcessMask, readJsonFile, writeJsonFile } = require('./utils');
 
 // Adiciona o plugin stealth para evitar detecção
@@ -15,9 +14,10 @@ puppeteer.use(StealthPlugin());
 /**
  * Extrai informações das partes do processo
  * @param {Page} page - Instância da página do Puppeteer
+ * @param {Object} config - Configurações do script
  * @returns {Promise<Array>} - Array com as informações das partes
  */
-async function extractPartyInfo(page) {
+async function extractPartyInfo(page, config) {
   try {
     await page.waitForSelector(config.selectors.pje.partyInfoTable, { timeout: 10000 });
     
@@ -75,9 +75,10 @@ async function extractPartyInfo(page) {
  * @param {Page} page - Instância da página do Puppeteer
  * @param {Browser} browser - Instância do navegador do Puppeteer
  * @param {string} numeroProcesso - Número do processo a ser consultado
+ * @param {Object} config - Configurações do script
  * @returns {Promise<Object>} - Objeto com as informações do processo
  */
-async function searchProcesso(page, browser, numeroProcesso) {
+async function searchProcesso(page, browser, numeroProcesso, config) {
   console.log(`Consultando processo ${numeroProcesso} no PJE`);
   
   try {
@@ -126,7 +127,7 @@ async function searchProcesso(page, browser, numeroProcesso) {
       await newPage.goto(`https://pje-consulta-publica.tjmg.jus.br${url}`, { waitUntil: 'networkidle2' });
       
       // Extrai as informações das partes
-      const partyInfo = await extractPartyInfo(newPage);
+      const partyInfo = await extractPartyInfo(newPage, config);
       
       // Fecha a nova aba
       await newPage.close();
@@ -149,10 +150,11 @@ async function searchProcesso(page, browser, numeroProcesso) {
 
 /**
  * Processa os dados do TJMG para extrair informações adicionais do PJE
+ * @param {Object} config - Configurações do script
  * @param {string} inputFile - Caminho do arquivo JSON com os dados do TJMG
  * @returns {Promise<Array>} - Array com os dados combinados
  */
-async function scrapePJE(inputFile) {
+async function scrapePJE(config, inputFile) {
   console.log('Iniciando scraping do PJE...');
   
   // Lê os dados do TJMG
@@ -208,7 +210,7 @@ async function scrapePJE(inputFile) {
       }
       
       // Extrai informações do PJE usando o número do processo de execução
-      const partyInfo = await searchProcesso(page, browser, row.numero);
+      const partyInfo = await searchProcesso(page, browser, row.numero, config);
       
       // Marca o registro como processado
       row.pje_processed = true;
@@ -257,12 +259,13 @@ module.exports = { scrapePJE };
 // Se este arquivo for executado diretamente
 if (require.main === module) {
   // Verifica se foi fornecido um arquivo de entrada
+  const config = require('./config');
   const inputFile = process.argv[2] || path.join(
     config.outputDir, 
     `tjmg_${config.consulta.entidade.replace(/\s+/g, '_')}_${config.consulta.anoInicio}-${config.consulta.anoFim}.json`
   );
   
-  scrapePJE(inputFile)
+  scrapePJE(config, inputFile)
     .then(() => console.log('Scraping do PJE concluído'))
     .catch(error => console.error('Erro:', error));
 }
