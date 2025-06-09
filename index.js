@@ -7,7 +7,7 @@ const path = require('path');
 const { scrapeTJMG } = require('./tjmg-scraper');
 const { scrapePJE } = require('./pje-scraper');
 const { writeJsonFile, readJsonFile } = require('./utils');
-const config = require('./config');
+let config = require('./config');
 
 /**
  * Formata os dados combinados no formato especificado pelo usuário
@@ -58,7 +58,7 @@ const runScraping = async (config) => {
 
     // Executa o scraping do TJMG
     console.log('Etapa 1: Scraping do TJMG');
-    const tjmgData = await scrapeTJMG();
+    const tjmgData = await scrapeTJMG(config);
 
     if (!tjmgData || tjmgData.length === 0) {
       console.error('Não foram encontrados dados no TJMG. Encerrando o processo.');
@@ -117,7 +117,7 @@ app.post('/scrape', async (req, res) => {
   console.log('Configuração atualizada:', config);
 
   // Inicia o scraping em background
-  runScraping(config);
+  process.nextTick(() => runScraping(config));
 
   res.send('Scraping iniciado em background. Verifique o console para o progresso.');
 });
