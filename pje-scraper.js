@@ -199,9 +199,6 @@ async function scrapePJE(config, inputFile) {
       `combined_${path.basename(inputFile)}`
     );
     
-    // Para fins de teste, limita o número de registros a serem processados
-    const maxRecords = 2; // Processa apenas 2 registros para teste
-    
     for (const row of jsonData) {
       // Pula registros já processados
       if (row.pje_processed) {
@@ -229,12 +226,6 @@ async function scrapePJE(config, inputFile) {
       
       // Incrementa o contador de registros processados
       processedCount++;
-      
-      // Para fins de teste, limita o número de registros a serem processados
-      if (processedCount >= maxRecords) {
-        console.log(`Limite de ${maxRecords} registros atingido. Interrompendo processamento.`);
-        break;
-      }
       
       // Aguarda um tempo antes de processar o próximo registro
       await randomDelay(2000, 5000);

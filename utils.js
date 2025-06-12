@@ -3,6 +3,7 @@
  */
 
 const fs = require('fs').promises;
+const axios = require('axios');
 
 /**
  * Lê um arquivo JSON e retorna seu conteúdo como objeto JavaScript
@@ -105,6 +106,33 @@ function formatCurrency(value) {
   }).format(value);
 }
 
+/**
+ * Envia dados para um webhook
+ * @param {string} webhookUrl - URL do webhook
+ * @param {Object|Array} data - Dados a serem enviados
+ * @returns {Promise<boolean>} - true se o envio foi bem-sucedido, false caso contrário
+ */
+async function sendToWebhook(webhookUrl, data) {
+  try {
+    const response = await axios.post(webhookUrl, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.status === 200) {
+      console.log('Dados enviados com sucesso para o webhook');
+      return true;
+    } else {
+      console.error('Erro ao enviar dados para o webhook:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('Erro ao enviar dados para o webhook:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   readJsonFile,
   writeJsonFile,
@@ -112,6 +140,7 @@ module.exports = {
   applyProcessMask,
   randomDelay,
   formatDate,
-  formatCurrency
+  formatCurrency,
+  sendToWebhook
 };
 

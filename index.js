@@ -6,8 +6,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { scrapeTJMG } = require('./tjmg-scraper');
 const { scrapePJE } = require('./pje-scraper');
-const { writeJsonFile, readJsonFile } = require('./utils');
+const { writeJsonFile, readJsonFile, sendToWebhook } = require('./utils');
 const fs = require('fs-extra');
+
+// URL do webhook
+const WEBHOOK_URL = 'https://n8n-n8n.wju2x4.easypanel.host/webhook/73fcd6da-1093-4880-8bc8-00bcb28c336b';
 
 /**
  * Formata os dados combinados no formato especificado pelo usuário
@@ -91,6 +94,10 @@ const runScraping = async (config) => {
       console.error('Não foi possível combinar os dados do TJMG e PJE. Encerrando o processo.');
       return;
     }
+
+    // Envia apenas os dados combinados para o webhook
+    console.log('Enviando dados combinados para o webhook...');
+    await sendToWebhook(WEBHOOK_URL, combinedData);
 
     console.log('Processo de scraping concluído com sucesso!');
   } catch (error) {
