@@ -96,21 +96,6 @@ app.post('/run-scraper', (req, res) => {
   });
 });
 
-// Nova rota para download de arquivo JSON
-app.get('/download/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(outputDir, filename);
-
- res.download(filePath, (err) => {
-    if (err) {
- console.error("Erro ao baixar arquivo:", err);
-      res.status(500).send('Erro ao baixar arquivo.');
-    }
-  });
-});
-
-
-
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });

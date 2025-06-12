@@ -183,7 +183,15 @@ app.post('/save', (req, res) => {
 // Adiciona rota para download dos arquivos
 app.get('/download/:filename', async (req, res) => {
   try {
+    const configPath = path.join(__dirname, 'config.js');
+    delete require.cache[require.resolve(configPath)];
+    const config = require(configPath);
+    
     const filePath = path.join(config.outputDir, req.params.filename);
+    
+    // Verifica se o arquivo existe
+    await fs.access(filePath);
+    
     res.download(filePath);
   } catch (error) {
     console.error('Erro ao fazer download do arquivo:', error);
