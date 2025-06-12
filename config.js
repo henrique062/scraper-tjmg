@@ -10,14 +10,14 @@ module.exports = {
     "pje": "https://pje-consulta-publica.tjmg.jus.br/"
   },
   "consulta": {
-    "entidade": "LOTERIA DO ESTADO DE MINAS GERAIS",
+    "entidade": "MUNICÍPIO DE BELO HORIZONTE",
     "anoInicio": "2026",
-    "anoFim": "2026",
-    "ocultarFechados": false,
-    "maxPages": 2
+    "anoFim": "2027",
+    "ocultarFechados": true,
+    "maxPages": 100
   },
   "browser": {
-    "headless": true,
+    "headless": false,
     "width": 1366,
     "height": 768,
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",

@@ -62,10 +62,15 @@ async function scrapeTJMG(config) {
     
     // Espera pela sugestão e clica nela
     try {
-      console.log('Aguardando sugestões...');
+      console.log('Aguardando sugestões do autocomplete...');
       await page.waitForSelector(config.selectors.tjmg.entidadeSuggestion, { timeout: 5000 });
       await randomDelay(500, 1000);
-      await page.keyboard.press('Enter');
+      // Clica na primeira sugestão
+      await page.evaluate((selector) => {
+        const el = document.querySelector(selector);
+        if (el) el.click();
+      }, config.selectors.tjmg.entidadeSuggestion);
+      console.log('Sugestão do autocomplete selecionada!');
       await randomDelay(1000, 2000);
     } catch (error) {
       console.log('Não foi possível encontrar sugestões, continuando...');
