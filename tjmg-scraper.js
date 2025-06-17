@@ -186,7 +186,13 @@ async function scrapeTJMG(config) {
             const obj = {};
             columns.forEach((col, idx) => {
               if (col !== 'empty') {
-                obj[col] = cells[idx].textContent.trim();
+                if (col === 'codigo') {
+                  const linkElement = cells[idx].querySelector('a[id$="\\:nprecatorio"]');
+                  obj[col] = linkElement ? linkElement.textContent.trim() : cells[idx].textContent.trim();
+                  obj.precatorioLinkId = linkElement ? linkElement.id : null; // Store the ID
+                } else {
+                  obj[col] = cells[idx].textContent.trim();
+                }
               }
             });
             
@@ -202,6 +208,14 @@ async function scrapeTJMG(config) {
       
       allTableData = allTableData.concat(tableData);
       
+      // Extrai detalhes para cada precatório
+      for (let i = 0; i < allTableData.length; i++) {
+        if (!allTableData[i].details_extracted) { // Evita reprocessar se já extraído
+          allTableData[i] = await extractPrecatorioDetails(page, allTableData[i], config);
+          allTableData[i].details_extracted = true; // Marca como extraído
+        }
+      }
+
       // Verifica se atingiu o limite de páginas (para testes)
       if (config.consulta.maxPages && currentPage >= config.consulta.maxPages) {
         console.log(`Limite de ${config.consulta.maxPages} páginas atingido. Interrompendo extração.`);
@@ -256,6 +270,56 @@ async function scrapeTJMG(config) {
     // Fecha o navegador
     await browser.close();
   }
+}
+
+/**
+ * Extrai detalhes adicionais de um precatório de seu diálogo pop-up.
+ * @param {import("puppeteer").Page} page - A instância da página do Puppeteer.
+ * @param {Object} precatorio - O objeto do precatório com o precatorioLinkId.
+ * @param {Object} config - O objeto de configuração do scraper.
+ * @returns {Promise<Object>} - O objeto do precatório atualizado com os novos detalhes.
+ */
+async function extractPrecatorioDetails(page, precatorio, config) {
+  if (!precatorio.precatorioLinkId) {
+    console.warn(`Precatório ${precatorio.numero} não possui ID de link para detalhes. Pulando extração.`);
+    return precatorio;
+  }
+
+  console.log(`Clicando no link de detalhes para o precatório ${precatorio.numero}...`);
+  try {
+    await page.waitForSelector(`#${precatorio.precatorioLinkId.replace(/:/g, '\\:')}`);
+    await page.click(`#${precatorio.precatorioLinkId.replace(/:/g, '\\:')}`);
+    await randomDelay(config.humanBehavior.minDelay, config.humanBehavior.maxDelay);
+
+    console.log(`Aguardando o diálogo de detalhes para o precatório ${precatorio.numero}...`);
+    await page.waitForSelector(config.selectors.tjmg.dialogDetalhe, { visible: true });
+    await randomDelay(config.humanBehavior.minDelay, config.humanBehavior.maxDelay);
+
+    const detalhes = await page.evaluate((selectors) => {
+      const valorFaceElement = document.querySelector(selectors.valorFaceLabel);
+      const dataAtualizacaoValorFaceElement = document.querySelector(selectors.dataAtualizacaoValorFaceLabel);
+      const acaoElement = document.querySelector(selectors.acaoLabel);
+
+      return {
+        valorFace: valorFaceElement ? valorFaceElement.textContent.trim() : null,
+        dataAtualizacaoValorFace: dataAtualizacaoValorFaceElement ? dataAtualizacaoValorFaceElement.textContent.trim() : null,
+        acao: acaoElement ? acaoElement.textContent.trim() : null,
+      };
+    }, config.selectors.tjmg);
+
+    // Combina os novos detalhes com o objeto precatório existente
+    Object.assign(precatorio, detalhes);
+
+    console.log(`Fechando o diálogo de detalhes para o precatório ${precatorio.numero}...`);
+    await page.click(config.selectors.tjmg.fecharDialogButton);
+    await page.waitForSelector(config.selectors.tjmg.dialogDetalhe, { hidden: true });
+    await randomDelay(config.humanBehavior.minDelay, config.humanBehavior.maxDelay);
+
+  } catch (error) {
+    console.error(`Erro ao extrair detalhes para o precatório ${precatorio.numero}:`, error.message);
+  }
+
+  return precatorio;
 }
 
 // Exporta a função para uso em outros arquivos

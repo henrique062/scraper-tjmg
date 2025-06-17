@@ -10,7 +10,7 @@ module.exports = {
     "pje": "https://pje-consulta-publica.tjmg.jus.br/"
   },
   "consulta": {
-    "entidade": "MUNICÍPIO DE BELO HORIZONTE",
+    "entidade": "MUNICÍPIO DE BOCAIÚVA",
     "anoInicio": "2026",
     "anoFim": "2027",
     "ocultarFechados": true,
@@ -48,7 +48,13 @@ module.exports = {
       "resultTable": "#resultado_data",
       "paginatorCurrent": ".ui-paginator-current",
       "nextPageButton": ".ui-paginator-next",
-      "loadingIndicator": "#j_idt160"
+      "loadingIndicator": "#j_idt160",
+      "precatorioNumeroLink": "a[id^='resultado:'][id$=':nprecatorio']",
+      "dialogDetalhe": "#frm_detalhe\\:idDialogDetalhe",
+      "valorFaceLabel": "#frm_detalhe\\:j_idt98\\:valorFace",
+      "dataAtualizacaoValorFaceLabel": "#frm_detalhe\\:j_idt98\\:liquidacao",
+      "acaoLabel": "#frm_detalhe\\:j_idt98\\:acao",
+      "fecharDialogButton": "button.ui-button.ui-button-text-only[onclick*=\'widgetDialogDetalhe.hide();\']"
     },
     "pje": {
       "processoInput": "#fPP\\:numProcesso-inputNumeroProcessoDecoration\\:numProcesso-inputNumeroProcesso",
