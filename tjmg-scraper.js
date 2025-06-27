@@ -312,7 +312,10 @@ async function extractPrecatorioDetails(page, precatorio, config) {
 
     console.log(`Fechando o diálogo de detalhes para o precatório ${precatorio.numero}...`);
     await page.click(config.selectors.tjmg.fecharDialogButton);
-    await page.waitForSelector(config.selectors.tjmg.dialogDetalhe, { hidden: true });
+    await page.waitForSelector(config.selectors.tjmg.dialogDetalhe, { 
+      hidden: true,
+      timeout: 5000 // Timeout de 10 segundos para aguardar o diálogo fechar
+    });
     await randomDelay(config.humanBehavior.minDelay, config.humanBehavior.maxDelay);
 
   } catch (error) {
